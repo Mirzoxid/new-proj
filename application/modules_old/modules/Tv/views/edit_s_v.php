@@ -1,0 +1,1 @@
+<div style="margin: 20px;"><h2><?php echo (!isset($msg)) ? '' : $msg ?></h2></div>
