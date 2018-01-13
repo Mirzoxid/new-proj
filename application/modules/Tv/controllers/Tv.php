@@ -81,7 +81,7 @@ class Tv extends MY_Controller
 
 		$check = $this->Tv_m->get_once($value);
 		if ($check == null) {
-			redirect('tv');
+			redirect('Tv');
 		}
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('id', "Channel id", 'required');
@@ -153,7 +153,7 @@ class Tv extends MY_Controller
 			redirect('tv');
 		} else {
 			$res = $this->Tv_m->delete_ch($value);
-			redirect('tv');
+			redirect('Tv');
 		}
 	}
 
