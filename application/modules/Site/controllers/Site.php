@@ -195,7 +195,7 @@ class Site extends MY_Controller
                     }
                 }
             }
-            $value = ['content_v' => "Site/manual_v2", 'art' => [ 'slinks' => $s_links, 'art'=>$list, 'full_story' => $art->full_story, 'title' => $art->title]];
+            $value = ['content_v' => "Site/manual_v2", 'art' => [ 'slinks' => $s_links, 'art'=>$list, 'full_story' => $res, 'title' => $art->title]];
             $this->templates($value);
         }
     }
