@@ -56,7 +56,10 @@ class Site extends MY_Controller
 		$this->templates($values);
 	}
 
-	public function manual_movie($value = null)
+    /**
+     * @param null $value
+     */
+    public function manual_movie($value = null)
 	{
         $value = ($value == '' || (int) $value == 0) ? 0 : (int) $value;
         if ($value == 0) {
@@ -89,17 +92,26 @@ class Site extends MY_Controller
 			$art = $this->Site_m->get_movie($value);
 			require_once('simple_html_dom.php');
 			$q = new simple_html_dom;
-			$q = str_get_html($art->full_story);
-			$list = [];
-			if ($art->full_story !== '') {
+            $content_link = $this->Site_m->generate_link($value);
+            $cont = file_get_contents('http://gals.loc/'.$content_link.'.html');
+            $q = str_get_html($cont);
+            $res = "";
+            if($q->innertext!='' and count($q->find('div[class=content]'))) {
+                foreach($q->find('div[class=content]') as $a)
+                {
+                    $res = $a->innertext;
+                }
+            }
+
+            $list = [];
+            $list2 = [];
+            if ($art->full_story !== '') {
 				if($q->innertext!='' and count($q->find('div'))) {
-					foreach ($q->find('a') as $item) {
-						if(!strpos($item->getAttribute('href'), '.jpg') && !strpos($item->getAttribute('href'), 'avascript'))
-							$list[] = $item->getAttribute('href');
-					}
-				}
+                    preg_match_all("/(https|http)?:\/\/[^\/]+(?:\/[^\/]+)*?(\.mp4|\.avi|\.webm|\.mkv|\.flv|\.vob|\.ogv|\.mov|\.wmv|\.yuv|\.m4p|\.mpeg|\.m4v|\.3gp|\.mpeg4|\.ts|\.ts2)/", $art->full_story, $list);
+                    preg_match_all("/(https|http)?:\/\/[^\/]+(?:\/[^\/]+)*?(\.mp4|\.avi|\.webm|\.mkv|\.flv|\.vob|\.ogv|\.mov|\.wmv|\.yuv|\.m4p|\.mpeg|\.m4v|\.3gp|\.mpeg4|\.ts|\.ts2)/", $art->xfields, $list2);
+                }
 			}
-			$value = ['content_v' => "Site/manual_v", 'art' => ['art'=>$list, 'full_story' => $art->full_story, 'title' => $art->title]];
+			$value = ['content_v' => "Site/manual_v", 'art' => ['art'=>[$list, $list2], 'full_story' => $res, 'title' => $art->title]];
 			$this->templates($value);
 		}
 	}
@@ -140,15 +152,21 @@ class Site extends MY_Controller
         } else {
             $art = $this->Site_m->get_movie($value);
             require_once('simple_html_dom.php');
-            $q = new simple_html_dom;
-            $q = str_get_html($art->full_story);
+            $q = new simple_html_dom;$content_link = $this->Site_m->generate_link($value);
+            $cont = file_get_contents('http://gals.loc/'.$content_link.'.html');
+            $q = str_get_html($cont);
+            $res = "";
+            if($q->innertext!='' and count($q->find('div[class=content]'))) {
+                foreach($q->find('div[class=content]') as $a)
+                {
+                    $res = $a->innertext;
+                }
+            }
             $list = [];
+
             if ($art->full_story !== '') {
                 if($q->innertext!='' and count($q->find('div'))) {
-                    foreach ($q->find('a') as $item) {
-                        if(!strpos($item->getAttribute('href'), '.jpg') && !strpos($item->getAttribute('href'), 'avascript'))
-                            $list[] = $item->getAttribute('href');
-                    }
+                    preg_match_all("/(https|http)?:\/\/[^\/]+(?:\/[^\/]+)*?(\.mp4|\.avi|\.webm|\.mkv|\.flv|\.vob|\.ogv|\.mov|\.wmv|\.yuv|\.m4p|\.mpeg|\.m4v|\.3gp|\.mpeg4|\.ts|\.ts2)/", $art->full_story, $list);
                 }
             }
             $s_links = [];
@@ -223,17 +241,25 @@ class Site extends MY_Controller
             require_once('simple_html_dom.php');
             $q = new simple_html_dom;
             $q = str_get_html($art->full_story);
+            $content_link = $this->Site_m->generate_link($value);
+            $cont = file_get_contents('http://gals.loc/'.$content_link.'.html');
+            $q = str_get_html($cont);
+            $res1 = "";
+            if($q->innertext!='' and count($q->find('div[class=content]'))) {
+                foreach($q->find('div[class=content]') as $a)
+                {
+                    $res1 = $a->innertext;
+                }
+            }
             $list = [];
             if ($art->full_story !== '') {
                 if($q->innertext!='' and count($q->find('div'))) {
-                    foreach ($q->find('a') as $item) {
-                        if(!strpos($item->getAttribute('href'), '.jpg') && !strpos($item->getAttribute('href'), 'avascript'))
-                            $list[] = $item->getAttribute('href');
-                    }
+                    preg_match_all("/(https|http)?:\/\/[^\/]+(?:\/[^\/]+)*?(\.mp4|\.avi|\.webm|\.mkv|\.flv|\.vob|\.ogv|\.mov|\.wmv|\.yuv|\.m4p|\.mpeg|\.m4v|\.3gp|\.mpeg4|\.ts|\.ts2)/", $art->full_story, $list);
+
                 }
             }
             $res = $this->Site_m->get_one_view($value);
-            $value = ['content_v' => "Site/edit_serial", 'art' => ['art' => $list, 'links' => $res]];
+            $value = ['content_v' => "Site/edit_serial", 'art' => ['art' => $list, 'links' => $res, 'full_story' => $res1]];
             $this->templates($value);
         }
     }
@@ -247,8 +273,8 @@ class Site extends MY_Controller
             redirect('Site/separated_serials');
         }
         $this->load->library('form_validation');
-        $this->form_validation->set_rules('movie1', "Movie 1", 'required');
-        $this->form_validation->set_rules('url1', "Movie 1", 'required');
+        $this->form_validation->set_rules('movie1', "Movie name", 'required');
+        $this->form_validation->set_rules('url1', "Movie url", 'required');
         $this->load->model('Site_m');
         if ($this->form_validation->run() === true) {
 //            var_dump($this->input->post());die;
@@ -277,18 +303,25 @@ class Site extends MY_Controller
             require_once('simple_html_dom.php');
             $q = new simple_html_dom;
             $q = str_get_html($art->full_story);
-            $list = [];
-            if ($art->full_story !== '') {
-                if($q->innertext!='' and count($q->find('div'))) {
-                    foreach ($q->find('a') as $item) {
-                        if(!strpos($item->getAttribute('href'), '.jpg') && !strpos($item->getAttribute('href'), 'avascript'))
-                            $list[] = $item->getAttribute('href');
-                    }
+            $content_link = $this->Site_m->generate_link($value);
+            $cont = file_get_contents('http://gals.loc/'.$content_link.'.html');
+            $q = str_get_html($cont);
+            $res1 = "";
+            if($q->innertext!='' and count($q->find('div[class=content]'))) {
+                foreach($q->find('div[class=content]') as $a)
+                {
+                    $res1 = $a->innertext;
                 }
+            }
+            $list = [];
+            $this->Site_m->generate_link($value);
+            if ($art->full_story !== '') {
+                preg_match_all("/(https|http)?:\/\/[^\/]+(?:\/[^\/]+)*?(\.mp4|\.avi|\.webm|\.mkv|\.flv|\.vob|\.ogv|\.mov|\.wmv|\.yuv|\.m4p|\.mpeg|\.m4v|\.3gp|\.mpeg4|\.ts|\.ts2)/", $art->full_story, $list);
+                preg_match_all("/(https|http)?:\/\/[^\/]+(?:\/[^\/]+)*?(\.mp4|\.avi|\.webm|\.mkv|\.flv|\.vob|\.ogv|\.mov|\.wmv|\.yuv|\.m4p|\.mpeg|\.m4v|\.3gp|\.mpeg4|\.ts|\.ts2)/", $art->xfields, $list2);
             }
 
             $res = $this->Site_m->get_one_view($value);
-            $value = ['content_v' => "Site/edit_movie", 'art' => ['art' => $list, 'links' => $res]];
+            $value = ['content_v' => "Site/edit_movie", 'art' => ['art' => [$list, $list2], 'links' => $res, 'full_story' => $res1]];
             $this->templates($value);
         }
     }

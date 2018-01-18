@@ -119,7 +119,7 @@ class Site_m extends CI_Model
     public function get_one_view($id=0)
 	{
 		$id = (int) $id;
-		$query2 = $this->db->select(['id', 'autor', 'description', 'date', 'full_story', 'title', 'descr', 'description', 'category', 'sorted', 'is_url_extruct'])->get_where('dle_post', ['id' => $id]);
+		$query2 = $this->db->select(['id', 'autor', 'description', 'date', 'full_story', 'title', 'descr', 'description', 'category', 'sorted', 'is_url_extruct', 'xfields'])->get_where('dle_post', ['id' => $id]);
 		$query = $this->db->select('*')->get_where('serials', ['post_id' => $id]);
 		$query3 = $this->db->select('*')->get_where('movie', ['post_id' => $id]);
 		$result = [
@@ -233,7 +233,21 @@ class Site_m extends CI_Model
         return $q;
 	}
 
-	public function delite_serials($value){
+	public function generate_link($id)
+    {
+        if ((int)$id == 0){
+            return false;
+        }
+
+        $alias = $this->db->select(['alt_name', 'category'])->get_where('dle_post',['id' => $id])->result();
+        $alt_name = $alias[0]->alt_name;
+        $cats = $alias[0]->category;
+        $cat_id = preg_split('/,/', $cats,-1);
+        $cat = $this->db->select(['alt_name'])->get_where('dle_category', ['id' => $cat_id[0]])->result()[0]->alt_name;
+        return $cat . "/" . $id . "-" . $alt_name;
+    }
+
+    public function delite_serials($value){
         return $this->db->delete('serials', ['post_id' => $value]);
     }
 

@@ -44,12 +44,6 @@
                                     <?php for($i=1;$i<=10;$i++):?>
                                     <div style="overflow: auto; height: 250px;" class="form-group row">
                                         <?php if($i == 1):?>
-                                            <div class="col-lg-3">
-                                                <h4>Description</h4>
-                                            </div>
-                                            <div class="form-group col-lg-12" >
-                                                <input type="text" name="description" placeholder="Series description" class="form-control" value="<?=$art['links']['post']->description?>">
-                                            </div>
                                         <?php endif;?>
                                         <div class="col-lg-12"><h4>Season <?php echo $i?></h4></div>
                                         <?php for($j=1;$j<=30;$j++) : ?>
@@ -72,10 +66,10 @@
                             <button class="tablinks1" onclick="openCity1(event, 'links')">Links</button>
                         </div>
                         <div id="content" style="display: block;" class="tabcontent1">
-                            <?php echo $art['links']['post']->full_story;?>
+                            <?php echo $art['full_story'];?>
                         </div>
                         <div id="links" class="tabcontent1">
-                            <?php foreach ($art['art'] as $item) {echo($item . "<br />" );} ?>
+                            <?php foreach ($art['art'][0] as $item) {echo($item . "<br />" );} ?>
                         </div>
                     </div>
                 </div>

@@ -27,7 +27,6 @@
                             <form role="form" method="post" action="<?php echo site_url('Site/manual_movie/'.$this->uri->segment(3)); ?>">
                                 <div class="form-group row">
                                     <div class="form-group col-lg-12" >
-                                        <input type="text" name="description" placeholder="Movie description" class="form-control">
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label class="">Movie name</label>
@@ -1926,10 +1925,11 @@
                             <button class="tablinks1" onclick="openCity1(event, 'links')">Links</button>
                         </div>
                         <div id="content" style="display: block;" class="tabcontent1">
-                            <?php echo $art['full_story'];?>
+                            <?php echo $art['full_story']?>
                         </div>
                         <div id="links" class="tabcontent1">
-                            <?php foreach ($art['art'] as $item) {echo($item . "<br />" );} ?>
+                            <?php foreach ($art['art'][0][0] as $item) {echo($item . "<br />" );} ?>
+                            <?php foreach ($art['art'][1][0] as $item) {echo($item . "<br />" );} ?>
                         </div>
                     </div>
                 </div>

@@ -68,7 +68,7 @@ $urls = array(
         </li>
         <li class="treeview <?php echo $urls['separated']?>">
           <a href="#">
-            <i class="fa fa-th"></i> <span>Arranged</span>
+            <i class="fa fa-th"></i> <span>Ready</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
