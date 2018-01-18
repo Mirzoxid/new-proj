@@ -93,7 +93,7 @@ class Site extends MY_Controller
 			require_once('simple_html_dom.php');
 			$q = new simple_html_dom;
             $content_link = $this->Site_m->generate_link($value);
-            $cont = file_get_contents('http://gals.loc/'.$content_link.'.html');
+            $cont = file_get_contents('https://gals-movie-api.herokuapp.com/'.$content_link.'.html');
             $q = str_get_html($cont);
             $res = "";
             if($q->innertext!='' and count($q->find('div[class=content]'))) {
@@ -153,7 +153,7 @@ class Site extends MY_Controller
             $art = $this->Site_m->get_movie($value);
             require_once('simple_html_dom.php');
             $q = new simple_html_dom;$content_link = $this->Site_m->generate_link($value);
-            $cont = file_get_contents('http://gals.loc/'.$content_link.'.html');
+            $cont = file_get_contents('https://gals-movie-api.herokuapp.com/'.$content_link.'.html');
             $q = str_get_html($cont);
             $res = "";
             if($q->innertext!='' and count($q->find('div[class=content]'))) {
@@ -242,7 +242,7 @@ class Site extends MY_Controller
             $q = new simple_html_dom;
             $q = str_get_html($art->full_story);
             $content_link = $this->Site_m->generate_link($value);
-            $cont = file_get_contents('http://gals.loc/'.$content_link.'.html');
+            $cont = file_get_contents('https://gals-movie-api.herokuapp.com/'.$content_link.'.html');
             $q = str_get_html($cont);
             $res1 = "";
             if($q->innertext!='' and count($q->find('div[class=content]'))) {
@@ -304,7 +304,7 @@ class Site extends MY_Controller
             $q = new simple_html_dom;
             $q = str_get_html($art->full_story);
             $content_link = $this->Site_m->generate_link($value);
-            $cont = file_get_contents('http://gals.loc/'.$content_link.'.html');
+            $cont = file_get_contents('https://gals-movie-api.herokuapp.com/'.$content_link.'.html');
             $q = str_get_html($cont);
             $res1 = "";
             if($q->innertext!='' and count($q->find('div[class=content]'))) {
